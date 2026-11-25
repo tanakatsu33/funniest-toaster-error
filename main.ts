@@ -1,9 +1,10 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const FAULT = "FAULT: I TOASTED BOTH SIDES. ONE SIDE IS PERFECT.";
+const FAULT_REPORT = "FAULT: I TOASTED BOTH SIDES.";
+const CONFESSION = "ONE SIDE IS PERFECT.";
 const KICKER = "PLEASE DO NOT TURN IT OVER.";
-const ENTRY = `${FAULT} ${KICKER}`;
+const ENTRY = `${FAULT_REPORT} ${CONFESSION} ${KICKER}`;
 
 function check(entry: string): void {
   const length = [...entry].length;
@@ -12,6 +13,9 @@ function check(entry: string): void {
   }
   if (/[\r\n]/.test(entry)) {
     throw new Error("entry must be a single line");
+  }
+  if (/[\u0000-\u001f\u007f-\u009f]/.test(entry)) {
+    throw new Error("entry must not contain tabs or other control characters");
   }
   if (entry.trim().length === 0) {
     throw new Error("entry must not be only whitespace");
